@@ -231,6 +231,12 @@
         const absoluteTop = secData ? secData.top : targetElem.offsetTop;
         const navOffset = 70;
         smoothScrollTo(Math.max(0, absoluteTop - navOffset));
+        
+        // Close mobile menu if open
+        const navMenu = document.getElementById('nav-menu');
+        if (navMenu && navMenu.classList.contains('open')) {
+          navMenu.classList.remove('open');
+        }
       }
     });
   });

@@ -779,20 +779,22 @@
           </div>
 
           <div class="contact-right glass-card">
-            <form id="contact-form" class="contact-form"
-              onsubmit="event.preventDefault(); alert('Message sent successfully!');">
+            <form id="contact-form" class="contact-form" action="https://formsubmit.co/officialsammyremi@gmail.com" method="POST">
+              <!-- Optional: Add a subject to the email -->
+              <input type="hidden" name="_subject" value="New Contact Form Submission from Portfolio!">
+
               <div class="form-row">
                 <div class="form-group">
-                  <input type="text" placeholder="Your Name" required class="form-input">
+                  <input type="text" name="name" placeholder="Your Name" required class="form-input">
                 </div>
                 <div class="form-group">
-                  <input type="email" placeholder="Your Email" required class="form-input">
+                  <input type="email" name="email" placeholder="Your Email" required class="form-input">
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
-                  <select class="form-input form-select">
+                  <select name="project_type" class="form-input form-select">
                     <option value="" disabled selected>Project Type</option>
                     <option value="web">Web Development</option>
                     <option value="frontend">Frontend Development</option>
@@ -801,17 +803,18 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <select class="form-input form-select">
+                  <select name="budget" class="form-input form-select">
                     <option value="" disabled selected>Budget Range</option>
-                    <option value="5k">$3k - $5k</option>
-                    <option value="10k">$5k - $10k</option>
-                    <option value="20k">$10k+</option>
+                    <option value="150k">150k - 350k</option>
+                    <option value="350k">350k - 750k</option>
+                    <option value="750k">750k - 1M</option>
+                    <option value="1M">1M+</option>
                   </select>
                 </div>
               </div>
 
               <div class="form-group">
-                <textarea placeholder="Tell me about your project..." rows="5" required
+                <textarea name="message" placeholder="Tell me about your project..." rows="5" required
                   class="form-input form-textarea"></textarea>
               </div>
 
