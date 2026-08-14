@@ -366,13 +366,86 @@ body {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   transform: translateZ(0);
   cursor: default;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
-.glass-card:hover {
-  border-color: rgba(255, 158, 0, 0.45);
-  background: rgba(20, 22, 36, 0.92);
-  transform: translateY(-6px) translateZ(0);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 158, 0, 0.18);
+/* Spotlight Glare */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(
+    800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+    rgba(255, 158, 0, 0.08),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glass-card:hover::before {
+  opacity: 1;
+}
+
+/* Keep content above the spotlight */
+.glass-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* JS active state */
+.glass-card.is-interactive {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* Hover effects & Parallax (Hover-capable devices) */
+@media (hover: hover) and (pointer: fine) {
+  .glass-card:hover {
+    border-color: rgba(255, 158, 0, 0.45);
+    background: rgba(20, 22, 36, 0.92);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 158, 0, 0.18);
+  }
+  
+  /* Non-JS Fallback Transform */
+  .glass-card:not(.is-interactive):hover {
+    transform: translateY(-6px) translateZ(0);
+  }
+
+  /* 3D Depth Parallax on Icons */
+  .glass-card .tech-badge,
+  .glass-card .service-icon,
+  .glass-card .info-icon,
+  .glass-card .contact-icon,
+  .glass-card .project-link {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .glass-card:hover .tech-badge,
+  .glass-card:hover .service-icon,
+  .glass-card:hover .info-icon,
+  .glass-card:hover .contact-icon,
+  .glass-card:hover .project-link {
+    transform: translateZ(40px) scale(1.1);
+  }
+}
+
+/* Reduced Motion & Mobile Fallbacks */
+@media (prefers-reduced-motion: reduce), (hover: none) {
+  .glass-card {
+    transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease !important;
+  }
+  .glass-card:hover {
+    border-color: rgba(255, 158, 0, 0.45);
+    background: rgba(20, 22, 36, 0.92);
+    transform: translateY(-6px) translateZ(0) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 158, 0, 0.18);
+  }
+  .glass-card::before { display: none; }
 }
 
 /* Hero Section */
@@ -1026,6 +1099,35 @@ a.contact-val:hover {
 
 .heart {
   color: #ff4d6d;
+}
+
+/* Scroll Reveal Animations */
+.scroll-hidden-left {
+  opacity: 0;
+  transform: translateX(-60px) translateZ(0);
+  pointer-events: none; /* Prevent hover during hide */
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.scroll-hidden-right {
+  opacity: 0;
+  transform: translateX(60px) translateZ(0);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.scroll-visible {
+  opacity: 1;
+  transform: translateX(0) translateZ(0);
+  pointer-events: auto;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hidden-left, .scroll-hidden-right {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Responsive Media Queries */

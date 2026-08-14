@@ -256,7 +256,129 @@
   document.addEventListener('DOMContentLoaded', refreshSectionBounds);
   window.addEventListener('load', refreshSectionBounds);
 
+  // Lusion-inspired 3D Card Interactive Animation
+  function initCardTiltAnimations() {
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const cards = document.querySelectorAll('.glass-card');
+    
+    cards.forEach(card => {
+      let bounds;
+      let mouseX = 0;
+      let mouseY = 0;
+      let targetRotX = 0;
+      let targetRotY = 0;
+      let currentRotX = 0;
+      let currentRotY = 0;
+      let targetScale = 1;
+      let currentScale = 1;
+      let rafId = null;
+      let isHovering = false;
+      
+      const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
+
+      const updateCard = () => {
+        currentRotX = lerp(currentRotX, targetRotX, 0.1);
+        currentRotY = lerp(currentRotY, targetRotY, 0.1);
+        currentScale = lerp(currentScale, targetScale, 0.1);
+        
+        card.style.transform = `perspective(1000px) rotateX(${currentRotX}deg) rotateY(${currentRotY}deg) scale(${currentScale})`;
+
+        if (!isHovering && Math.abs(currentRotX) < 0.01 && Math.abs(currentRotY) < 0.01 && Math.abs(currentScale - 1) < 0.001) {
+          card.style.transform = ``;
+          card.classList.remove('is-interactive');
+          cancelAnimationFrame(rafId);
+          rafId = null;
+          return;
+        }
+        
+        rafId = requestAnimationFrame(updateCard);
+      };
+
+      card.addEventListener('mouseenter', () => {
+        isHovering = true;
+        card.classList.add('is-interactive');
+        bounds = card.getBoundingClientRect();
+        targetScale = 1.02; // Subtle 2% scale
+        if (!rafId) {
+          rafId = requestAnimationFrame(updateCard);
+        }
+      });
+
+      card.addEventListener('mousemove', (e) => {
+        if (!bounds) return;
+        
+        // Spotlight tracking
+        mouseX = e.clientX - bounds.left;
+        mouseY = e.clientY - bounds.top;
+        card.style.setProperty('--mouse-x', `${mouseX}px`);
+        card.style.setProperty('--mouse-y', `${mouseY}px`);
+
+        // Calculate percentages from center (-1 to 1)
+        const xPct = (mouseX / bounds.width) * 2 - 1;
+        const yPct = (mouseY / bounds.height) * 2 - 1;
+        
+        const MAX_ROTATION = 12; // Degrees
+        targetRotX = yPct * -MAX_ROTATION;
+        targetRotY = xPct * MAX_ROTATION;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        isHovering = false;
+        targetRotX = 0;
+        targetRotY = 0;
+        targetScale = 1;
+      });
+      
+      window.addEventListener('scroll', () => {
+        if (isHovering) bounds = card.getBoundingClientRect();
+      }, { passive: true });
+    });
+  }
+
+  // Scroll-triggered slide-in animations
+  function initScrollReveal() {
+    const cards = document.querySelectorAll('.glass-card');
+    if (!cards.length) return;
+    
+    // Assign alternating initial hidden classes
+    cards.forEach((card, index) => {
+      if (index % 2 === 0) {
+        card.classList.add('scroll-hidden-left');
+      } else {
+        card.classList.add('scroll-hidden-right');
+      }
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Staggered delay based on index for a cascade effect
+          const cardIndex = Array.from(cards).indexOf(entry.target);
+          const delay = (cardIndex % 4) * 100; // 0, 100, 200, or 300ms delay
+          
+          setTimeout(() => {
+            entry.target.classList.add('scroll-visible');
+          }, delay);
+        } else {
+          // Hide it again so it animates next time it enters view
+          entry.target.classList.remove('scroll-visible');
+        }
+      });
+    }, {
+      root: null,
+      threshold: 0.1, // Trigger when 10% visible
+      rootMargin: "0px 0px -20px 0px"
+    });
+
+    cards.forEach(card => observer.observe(card));
+  }
+
   // Initialize
   resizeCanvas();
   preloadImages();
+  initCardTiltAnimations();
+  initScrollReveal();
 })();
+
