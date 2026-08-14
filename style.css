@@ -1055,6 +1055,15 @@ a.contact-val:hover {
     display: flex;
   }
   .mobile-toggle { display: flex; }
+  
+  .nav-logo { font-size: 1.05rem; }
+  .nav-actions { gap: 14px; }
+  .nav-actions .btn-sm {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+  
   .hero-title { font-size: 2.6rem; }
   .hero-subtitle { font-size: 1.3rem; }
   .about-grid { grid-template-columns: 1fr; }
