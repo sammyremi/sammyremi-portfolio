@@ -1168,6 +1168,11 @@ a.contact-val:hover {
   
   .hero-title { font-size: 2.6rem; }
   .hero-subtitle { font-size: 1.3rem; }
+  .hero-cta-group .btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
   .about-grid { grid-template-columns: 1fr; }
   .skills-wrapper { grid-template-columns: 1fr; }
   .services-grid { grid-template-columns: 1fr; }
